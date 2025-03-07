@@ -1,0 +1,44 @@
+services:
+  frontend:
+    build:
+      context: /frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"  
+    networks:
+      - app-network
+  backend:
+    build:
+      context: /backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/note_app
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy   
+
+
+  db:
+    image: mysql:8.0  
+    environment:
+      MYSQL_ROOT_PASSWORD: root  
+      MYSQL_DATABASE: note_app 
+    ports:
+      - "3308:3306"   
+    networks:
+      - app-network    
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]  
+      interval: 10s  
+      retries: 5  
+      start_period: 30s     
+
+networks:
+  app-network:
+    driver: bridge
