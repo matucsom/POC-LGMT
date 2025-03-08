@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ensolvers.demo.dto.NoteDTO;
 import com.ensolvers.demo.exception.ResourceNotFoundException;
@@ -18,6 +19,7 @@ import com.ensolvers.demo.service.NoteService;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.NonNull;
 
+@Service
 public class NoteServiceImpl implements NoteService {
 	
 	@Autowired

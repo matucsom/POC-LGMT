@@ -2,6 +2,7 @@ package com.ensolvers.demo.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.ensolvers.demo.dto.NoteDTO;
