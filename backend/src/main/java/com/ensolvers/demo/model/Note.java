@@ -50,7 +50,5 @@ public class Note {
 	@JoinColumn(name="category_id", nullable=false)
 	private Category category;
 	
-	@CreationTimestamp
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createdAt;
+	
 }
