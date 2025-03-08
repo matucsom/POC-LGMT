@@ -14,6 +14,7 @@ public class NoteMapper {
 				.text(note.getText())
 				.userid(note.getUser().getId())
 				.categoryid(note.getCategory().getId())
+				.archivated(note.isArchived())
 				.build();
 	}
 	
@@ -35,7 +36,7 @@ public class NoteMapper {
 				.text(noteDTO.getText())
 				.user(user)
 				.category(category)
-			  //.archived(noteDTO.getArchived) TODO
+			    .archived(noteDTO.isArchivated()) 
 				.build();
 	}
 	

@@ -26,5 +26,7 @@ public class NoteDTO {
 	private Long userid;
 	
 	private Long categoryid;
+	
+	private boolean archivated;
 
 }
