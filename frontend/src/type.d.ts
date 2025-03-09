@@ -16,5 +16,4 @@ export interface iNoteComplete extends iNote{
 }
 
 export interface iCategory{
-
 }
