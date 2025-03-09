@@ -9,7 +9,7 @@ const RedirectionButtonArchived: React.FC = () => {
   };
 
   return (
-    <Button variant="contained" color="primary" onClick={handleClick}>
+    <Button variant="contained" color="primary" onClick={handleClick} sx={{margin: "16px"}}>
       Ver Notas Archivadas
     </Button>
   );

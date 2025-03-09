@@ -11,7 +11,7 @@ interface NoteProps {
   
   const NoteCard: React.FC<NoteProps> = ({ note }) => {
     return (
-      <Card>
+      <Card sx={{ mt: 2 }}>
         <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography>{note.title}</Typography>
           <div>
