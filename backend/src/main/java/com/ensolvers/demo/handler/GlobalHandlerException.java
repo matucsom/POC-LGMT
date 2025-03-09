@@ -9,7 +9,9 @@ import com.ensolvers.demo.exception.ApiError;
 import com.ensolvers.demo.exception.ResourceNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalHandlerException {
 

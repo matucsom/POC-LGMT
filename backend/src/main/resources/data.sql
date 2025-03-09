@@ -8,13 +8,13 @@ VALUES (1, 'ninguna', 1);
 
 -- Inserción de 10 notas asociadas al usuario 1 y a la categoría "ninguna"
 INSERT INTO notes (id, title, text, archived, user_id, category_id) 
-VALUES (1, 'Nota 1', 'Texto de la nota 1', false, 1, 1);
+VALUES (1, 'Nota 1', 'Texto de la nota 1', true, 1, 1);
 
 INSERT INTO notes (id, title, text, archived, user_id, category_id) 
-VALUES (2, 'Nota 2', 'Texto de la nota 2', false, 1, 1);
+VALUES (2, 'Nota 2', 'Texto de la nota 2', true, 1, 1);
 
 INSERT INTO notes (id, title, text, archived, user_id, category_id) 
-VALUES (3, 'Nota 3', 'Texto de la nota 3', false, 1, 1);
+VALUES (3, 'Nota 3', 'Texto de la nota 3', true, 1, 1);
 
 INSERT INTO notes (id, title, text, archived, user_id, category_id) 
 VALUES (4, 'Nota 4', 'Texto de la nota 4', false, 1, 1);

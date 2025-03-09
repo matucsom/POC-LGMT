@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.ensolvers.demo.dto.NoteDTO;
 import com.ensolvers.demo.exception.ResourceNotFoundException;
 import com.ensolvers.demo.mapper.NoteMapper;
+import com.ensolvers.demo.model.Category;
 import com.ensolvers.demo.model.Note;
 import com.ensolvers.demo.model.User;
+import com.ensolvers.demo.repository.CategoryRepository;
 import com.ensolvers.demo.repository.NoteRepository;
 import com.ensolvers.demo.repository.UserRepository;
 import com.ensolvers.demo.service.NoteService;
@@ -28,11 +30,18 @@ public class NoteServiceImpl implements NoteService {
 	@Autowired
 	UserRepository userRepository;
 	
-
+	@Autowired
+	CategoryRepository categoryRepository;
+	
 	@Override
 	public NoteDTO createNote(@NonNull NoteDTO noteDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		User user= userRepository.findById(noteDTO.getUserid()).get();
+		Category category = categoryRepository.findById(noteDTO.getCategoryid()).get();
+		Note note=  NoteMapper.toNewEntity(noteDTO, user, category);
+		Note savedNote= noteRepository.save(note);
+		
+		return NoteMapper.toDTO(savedNote);
 	}
 
 	@Override
@@ -43,15 +52,22 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public NoteDTO updateNote(@NonNull NoteDTO noteDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		Note note = getNoteByIdOrThrowException(noteDTO.getId()); 
+		Category newPossiblecategory = categoryRepository.findById(noteDTO.getCategoryid()).orElseThrow(()-> new ResourceNotFoundException());
+
+		note.setCategory(newPossiblecategory);
+		if (noteDTO.getTitle() != null) note.setTitle(noteDTO.getTitle());
+		if (noteDTO.getText() != null) note.setText(noteDTO.getText());
+		 
+		Note savedNote =  noteRepository.save(note);
+		
+		return NoteMapper.toDTO(savedNote);
 	}
 
 	@Override
 	public List<NoteDTO> findAllArchivedNotes(@NonNull @PositiveOrZero Long userid) {
 		User user = userRepository.findById(userid).orElseThrow(() -> new ResourceNotFoundException());
 		List<Note> archivedNotes = noteRepository.findByArchivedAndUser(true, user).orElse(Collections.emptyList());
-		
 		
 		return archivedNotes.stream()
 				.map(NoteMapper::toDTO)
