@@ -1,18 +1,21 @@
+version: "3.8"
+
 services:
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "5173:5173"  
+      - "5173:5173"
     networks:
       - app-network
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"  
+      - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/note_app
       - SPRING_DATASOURCE_USERNAME=root
@@ -21,23 +24,62 @@ services:
       - app-network
     depends_on:
       db:
-        condition: service_healthy   
-
+        condition: service_healthy
+      loki:
+        condition: service_started
+    volumes:
+      - ./backend/logs:/var/log/backend-app
 
   db:
-    image: mysql:8.0  
+    image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: root  
-      MYSQL_DATABASE: note_app 
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: note_app
     ports:
-      - "3308:3306"   
+      - "3308:3306"
     networks:
-      - app-network    
+      - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]  
-      interval: 10s  
-      retries: 5  
-      start_period: 30s     
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./backend/loki-config.yaml:/etc/loki/local-config.yaml
+      - ./backend/loki-wal:/wal
+    networks:
+      - app-network
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    volumes:
+      - ./backend/promtail/promtail-config.yaml:/etc/promtail/config.yaml
+      - ./backend/logs:/var/log/backend-app
+    command: -config.file=/etc/promtail/config.yaml
+    networks:
+      - app-network
+    depends_on:
+      - loki
+
+  grafana:
+    image: grafana/grafana:10.1.4
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - app-network
+    depends_on:
+      - loki
 
 networks:
   app-network:
