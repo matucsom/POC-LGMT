@@ -1,12 +1,16 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
+    <!-- Appender para Loki -->
     <appender name="LOKI" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/demo-app/demo-app.log</file>
+        <!-- Ruta corregida -->
+        <file>/var/log/backend-app/backend-app.log</file>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/var/log/demo-app/demo-app-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>/var/log/backend-app/backend-app-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
+
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <timestamp/>
@@ -20,10 +24,12 @@
         </encoder>
     </appender>
 
+    <!-- Async para mejorar performance -->
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="LOKI"/>
     </appender>
 
+    <!-- Root logger -->
     <root level="INFO">
         <appender-ref ref="ASYNC"/>
     </root>
