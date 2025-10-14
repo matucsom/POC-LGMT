@@ -1,0 +1,28 @@
+receivers:
+  otlp:
+    protocols:
+      grpc: #4317 puerto por default
+      http: #4318 puerto por default
+
+exporters:
+  otlphttp/tempo:
+    endpoint: http://tempo:4321
+    tls:
+      insecure: true
+
+  logging:
+    loglevel: info
+
+processors:
+  batch:
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 256
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/tempo, logging]
+

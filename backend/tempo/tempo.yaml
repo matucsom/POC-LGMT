@@ -1,0 +1,18 @@
+server:
+  http_listen_port: 3200  # puerto para exponer datos, al grafana o consumidor final
+  grpc_listen_port: 4319
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317   # coincide con grpc_listen_port
+        http:
+          endpoint: 0.0.0.0:4321   # usado por OTel Collector interno
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/tempo
