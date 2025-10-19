@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.ensolvers.demo.model.Note;
 import com.ensolvers.demo.model.User;
 
+@Repository
 public interface NoteRepository extends JpaRepository<Note,Long> {
 
 	List<Note> findByArchived(boolean archived);

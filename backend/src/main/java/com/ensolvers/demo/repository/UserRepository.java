@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ensolvers.demo.model.User;
 
-
+@Repository
 public interface UserRepository extends JpaRepository<User,Long> {
 
 }
