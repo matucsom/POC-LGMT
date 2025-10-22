@@ -10,7 +10,17 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-
+/**
+ *  Aspecto encargado de generar trazas automáticas para todos los métodos
+ * dentro de la capa de servicio (@Service).
+ *
+ * El flujo principal:
+ * 1 Crear un span para el método interceptado.
+ * 2 Enriquecerlo con información del contexto y parámetros.
+ * 3 Ejecutar el método real.
+ * 4 Capturar errores si ocurren.
+ * 5 Cerrar el span correctamente.
+ */
 @Slf4j
 @Aspect
 @Component
