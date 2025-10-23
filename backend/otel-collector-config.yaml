@@ -5,14 +5,17 @@ receivers:
       http:
 
   filelog/backend-app:
-    include: ["/var/log/backend-app/*.log" ]
+    include: ["/var/log/backend-app/*.log"]
     start_at: beginning
     operators:
       - type: regex_parser
-        regex: '^(?P<ts>[^ ]+) \[(?P<thread>[^\]]+)\] \[trace_id=(?P<trace_id>[^ ]+) span_id=(?P<span_id>[^\]]+)\] (?P<level>[^ ]+) +(?P<logger>[^ ]+) - (?P<message>.*)$'
+        regex: '^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}) \[(?P<thread>[^\]]+)\] \[trace_id=(?P<trace_id>[^\s]+) span_id=(?P<span_id>[^\]]+)\] (?P<level>\S+)\s+(?P<logger>[^\s]+) - (?P<message>.*)$'
         timestamp:
-          parse_from: ts
-          layout: "%Y-%m-%d %H:%M:%S.%f"
+          # IMPORTANTE: leer el valor del grupo regex que está en attributes.<name>
+          parse_from: attributes.ts
+          layout_type: strptime
+          # formato compatible con %d{yyyy-MM-dd HH:mm:ss.SSS} de Logback
+          layout: "%Y-%m-%d %H:%M:%S.%L"
 
 processors:
   batch:
