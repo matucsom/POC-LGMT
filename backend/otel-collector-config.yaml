@@ -1,10 +1,29 @@
 receivers:
   otlp:
     protocols:
-      grpc: #4317 puerto por default
-      http: #4318 puerto por default
+      grpc:
+      http:
+
+  filelog/backend-app:
+    include: ["/var/log/backend-app/*.log" ]
+    start_at: beginning
+    operators:
+      - type: regex_parser
+        regex: '^(?P<ts>[^ ]+) \[(?P<thread>[^\]]+)\] \[trace_id=(?P<trace_id>[^ ]+) span_id=(?P<span_id>[^\]]+)\] (?P<level>[^ ]+) +(?P<logger>[^ ]+) - (?P<message>.*)$'
+        timestamp:
+          parse_from: ts
+          layout: "%Y-%m-%d %H:%M:%S.%f"
+
+processors:
+  batch:
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 256
 
 exporters:
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+
   otlphttp/tempo:
     endpoint: http://tempo:4321
     tls:
@@ -13,12 +32,6 @@ exporters:
   logging:
     loglevel: info
 
-processors:
-  batch:
-  memory_limiter:
-    check_interval: 5s
-    limit_mib: 256
-
 service:
   pipelines:
     traces:
@@ -26,3 +39,7 @@ service:
       processors: [memory_limiter, batch]
       exporters: [otlphttp/tempo, logging]
 
+    logs:
+      receivers: [filelog/backend-app, otlp]
+      processors: [memory_limiter, batch]
+      exporters: [loki, logging]

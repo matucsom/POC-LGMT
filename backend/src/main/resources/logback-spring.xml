@@ -1,32 +1,31 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <!-- Appender para Loki -->
+    <!-- Appender para OTEL Collector / Loki -->
     <appender name="LOKI" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- Ruta corregida -->
+        <!-- Ruta donde OTEL Collector va a leer los logs -->
         <file>/var/log/backend-app/backend-app.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Archivos diarios -->
             <fileNamePattern>/var/log/backend-app/backend-app-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
 
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp/>
-                <mdc/>
-                <loggerName/>
-                <logLevel/>
-                <threadName/>
-                <message/>
-                <stackTrace/>
-            </providers>
+        <!-- Texto plano compatible con regex del OTEL Collector -->
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [trace_id=%X{trace_id} span_id=%X{span_id}] %-5level %logger{36} - %msg%n
+            </pattern>
         </encoder>
     </appender>
 
     <!-- Async para mejorar performance -->
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="LOKI"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
     </appender>
 
     <!-- Root logger -->
